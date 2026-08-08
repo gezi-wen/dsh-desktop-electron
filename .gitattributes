@@ -1,0 +1,4 @@
+# The repo's canonical text form is LF, enforced at checkout too, matching the
+# harness convention. PNG icons are binary and must never be line-converted.
+* text=auto eol=lf
+*.png binary

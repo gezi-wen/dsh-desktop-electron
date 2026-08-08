@@ -1,0 +1,40 @@
+# dsh-desktop-electron packaging. The app payload is lib/ (the Electron main
+# and the process-tree primitive, both emitted by tsc) and build/ (icons).
+# This shell carries no harness source and bundles no Node runtime, so there
+# is no dependency closure to pack — the backend is the host's own `dsh web`.
+appId: ai.deepseek.dsh-desktop-electron
+productName: DSH Desktop
+directories:
+  output: release
+  buildResources: build
+files:
+  - lib/**
+  - build/**
+  - package.json
+asar: true
+# The reaper runs under Electron-as-Node, which cannot read inside app.asar.
+asarUnpack:
+  - lib/reaper.js
+  - lib/process-tree.js
+win:
+  icon: build/icon.png
+  target:
+    - nsis
+    - portable
+mac:
+  icon: build/icon.png
+  target:
+    - dmg
+    - zip
+linux:
+  icon: build/icon.png
+  category: Development
+  target:
+    - AppImage
+    - tar.gz
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  shortcutName: DSH Desktop
+portable:
+  artifactName: ${productName}-${version}-portable.${ext}
