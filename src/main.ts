@@ -30,6 +30,9 @@ let tray: Tray | undefined
 let server: ChildProcess | undefined
 let serverUrl: URL | undefined
 let quitting = false
+// Set by the first fatal() so one root cause cannot show duplicate modal
+// dialogs or dispatch process-tree teardown twice.
+let failing = false
 // A focus request (second launch, tray click) that arrived while the server
 // was still booting and no window existed yet; honored once boot completes.
 let pendingFocus = false
@@ -193,6 +196,8 @@ async function exposeLifecycleTestControl(): Promise<void> {
 
 function fatal(error: Error): void {
   console.error(`[dsh-desktop] ${error.message}`)
+  if (failing) return
+  failing = true
   dialog.showErrorBox(WINDOW_TITLE, error.message)
   // app.exit() skips before-quit; kill the server tree and wait for the
   // dispatch to land so a boot failure cannot leave an orphaned `dsh web`
@@ -300,7 +305,10 @@ async function boot(): Promise<void> {
   } catch (error) {
     fatal(error instanceof Error ? new Error(`${error.message}\n${stderrTail}`) : new Error(String(error)))
   }
-  if (url === undefined) return
+  // `url` survives a later failure in the same try (HTTP readiness failure or
+  // child exit after binding). Only create the UI after the complete readiness
+  // boundary succeeds, while fatal() tears the failed server down.
+  if (!ready || url === undefined) return
   Menu.setApplicationMenu(null)
   createWindow(url)
   createTray()
@@ -329,6 +337,13 @@ if (!app.requestSingleInstanceLock()) {
   app.setAppUserModelId(APP_ID)
   app.whenReady().then(boot).catch(fatal)
   app.on('before-quit', (event) => {
+    // More than one path can request quit. Keep the first tree-kill as the
+    // single teardown owner and prevent later before-quit events from exiting
+    // Electron while that asynchronous kill is still in flight.
+    if (quitting) {
+      if (server?.pid !== undefined) event.preventDefault()
+      return
+    }
     quitting = true
     if (server?.pid !== undefined) {
       // Prevent immediate exit and await the process-tree completion boundary

@@ -4,6 +4,8 @@ English | [中文](README.zh.md)
 
 An Electron desktop shell for the [DeepSeek Harness](https://github.com/deepseek-harness) (`dsh`) Web GUI: it spawns `dsh web`, waits for the server's readiness line, and hosts the GUI in a standalone window with tray residency.
 
+Compatibility was verified against the last currently available internal-test CLI, `@deepseek-ai/dsh` `0.0.1-rc.1` (`snapshot-20260811T152241Z-da262ec14c`). The shell relies only on the maintained `dsh web --host <host> --port <port>` arguments and the `dsh web: <URL>` readiness line.
+
 > This repository is a DSH internal-testing community repo under the `dsh-external` organization. It carries **no harness source code** — the backend is your own `dsh` installation. The organization is not guaranteed to outlive the internal-testing period; keep your own copy.
 
 ## What this is

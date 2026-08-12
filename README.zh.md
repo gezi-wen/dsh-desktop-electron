@@ -4,6 +4,8 @@
 
 [DeepSeek Harness](https://github.com/deepseek-harness)（`dsh`）Web GUI 的 Electron 桌面外壳：启动 `dsh web`，等待服务端的就绪行，把 GUI 托管在独立窗口里，并常驻托盘。
 
+兼容性已针对当前可用的最后一个内测 CLI `@deepseek-ai/dsh` `0.0.1-rc.1`（`snapshot-20260811T152241Z-da262ec14c`）完成核验。外壳仅依赖维护中的 `dsh web --host <host> --port <port>` 参数和 `dsh web: <URL>` 就绪行。
+
 > 本仓库是 `dsh-external` 组织下的 DSH 内测社区仓库，**不携带任何 harness 源码** —— 后端用的是你自己安装的 `dsh`。官方不保证公开发布后该组织仍然存在，请自行保留副本。
 
 ## 这是什么
