@@ -12,8 +12,8 @@ import { killProcessTree } from './process-tree.ts'
 import { app, BrowserWindow, dialog, Menu, nativeImage, shell, Tray } from './electron-api.ts'
 import { resolveWebLaunch, waitForHttpOk, waitForReadyLine, childExited } from './launcher.ts'
 
-const APP_ID = 'ai.deepseek.dsh-desktop'
-const WINDOW_TITLE = 'DSH Desktop'
+const APP_ID = 'ai.sage.gui'
+const WINDOW_TITLE = 'Sage'
 const STDERR_TAIL_LIMIT = 4_000
 /**
  * The repository root in dev, the asar root when packaged. Resolved from
