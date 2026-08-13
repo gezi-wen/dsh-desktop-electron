@@ -69,6 +69,12 @@ export function resolveWebLaunch(options: LaunchEnvironment): WebServerLaunch {
   if (dshBin !== undefined && dshBin !== '') {
     return { command: dshBin, args: [...WEB_ARGS], env: permissionMode, source: 'DSH_BIN' }
   }
+  const nodeBin = options.env.DSH_NODE_BIN
+  if (nodeBin !== undefined && nodeBin !== '') {
+    // Node 24+ cannot spawn npm's `.cmd` shims directly (spawn EINVAL);
+    // run the installed package's bin.js with node instead.
+    return { command: options.nodeCommand ?? 'node', args: [nodeBin, ...WEB_ARGS], env: permissionMode, source: 'DSH_NODE_BIN' }
+  }
   const dshHome = options.env.DSH_HOME
   if (dshHome !== undefined && dshHome !== '') {
     const builtBin = join(dshHome, 'apps', 'cli', 'lib', 'bin.js')
