@@ -121,11 +121,11 @@ function createWindow(url: URL): void {
     // not crash the main process, the window just stays on its error page.
     console.error(`[dsh-desktop] failed to load ${url.href}: ${error instanceof Error ? error.message : String(error)}`)
   })
-  window.on('close', (event) => {
-    // Tray residency: closing hides the window and keeps the server running.
+  window.on('close', () => {
+    // No tray residency: closing the window quits the app. A desktop-icon
+    // double-click must always open a fresh window — a hidden tray-resident
+    // instance caused confusing "double-click does nothing" reports.
     if (quitting) return
-    event.preventDefault()
-    window.hide()
   })
   window.on('closed', () => { if (mainWindow === window) mainWindow = undefined })
   // The GUI is a single-page app; anything that opens a new window or
@@ -356,5 +356,5 @@ if (!app.requestSingleInstanceLock()) {
   })
   // Tray residency: the app outlives its window by design, so a destroyed
   // window must not trigger Electron's default quit.
-  app.on('window-all-closed', () => {})
+  app.on('window-all-closed', () => { app.quit() })
 }
